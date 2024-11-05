@@ -8,6 +8,8 @@ import (
 	pb "github.com/Aritiaya50217/gRPC/grpc-hello-world/proto"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -26,7 +28,9 @@ type server struct {
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	// Log ชื่อที่ได้รับจาก request
 	log.Printf("Received: %v", in.GetName())
-
+	if len(in.GetName()) > 10 {
+		return nil, status.Error(codes.InvalidArgument, "Name is too long")
+	}
 	// ตอบกลับข้อความทักทาย
 	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
 }
